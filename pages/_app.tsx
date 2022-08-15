@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import '../styles/variables.css'
 import '../styles/globals.css'
 import { AppProps } from 'next/app'
 
