@@ -17,6 +17,68 @@ a {
     text-decoration: none;
 }
 
+#content {
+    height: 600px;
+    background: hsla(44, 33%, 89%, 1);
+    background: linear-gradient(90deg, hsla(44, 33%, 89%, 1) 0%, hsla(44, 46%, 82%, 1) 51%, hsla(44, 33%, 89%, 1) 100%);
+    background: -moz-linear-gradient(
+        90deg,
+        hsla(44, 33%, 89%, 1) 0%,
+        hsla(44, 46%, 82%, 1) 51%,
+        hsla(44, 33%, 89%, 1) 100%
+    );
+    background: -webkit-linear-gradient(
+        90deg,
+        hsla(44, 33%, 89%, 1) 0%,
+        hsla(44, 46%, 82%, 1) 51%,
+        hsla(44, 33%, 89%, 1) 100%
+    );
+}
+
+/* https://css.glass */
+.main-editor {
+    background: rgba(255, 255, 255, 0.24);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.menu-bottom {
+    /* From https://css.glass */
+    /*background: rgba(255, 255, 255, 0.69);*/
+    /*box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);*/
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.editor-option[data-active="true"] {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.editor-option:focus {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.common-item {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.common-item-command {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
 * {
     box-sizing: border-box;
 }

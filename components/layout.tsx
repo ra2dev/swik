@@ -99,8 +99,8 @@ export const Layout = (props: any) => {
     return (
         <>
             <Navigation />
-            <main className='container ml-auto mr-auto h-20 pt-10 pr-10 max-w-5xl mb-20 min-h-screen'>
-                {props.children}
+            <main className='w-full' id='content'>
+                <div className='container ml-auto mr-auto pt-10 pr-10 max-w-5xl mb-20'>{props.children}</div>
             </main>
             <Footer />
         </>
