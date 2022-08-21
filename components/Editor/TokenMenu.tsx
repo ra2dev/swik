@@ -45,7 +45,7 @@ export const TokenMenu = () => {
                     return (
                         <div className='mb-1'>
                             {e.title && <div className='text-xs font-light text-gray-500'>{e.title}</div>}
-                            {e.items?.map((el, i) => {
+                            {e.items?.map((el: any, i: any) => {
                                 const active = i === 0 && j === 1
                                 return (
                                     <button
@@ -75,13 +75,6 @@ export const TokenMenu = () => {
     )
 }
 
-function EditActiveIcon(props: any) {
-    return (
-        <svg {...props} viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
-            <path d='M4 13V16H7L16 7L13 4L4 13Z' fill='#8B5CF6' stroke='#fda4af' strokeWidth='2' />
-        </svg>
-    )
-}
 
 function EditInactiveIcon(props: any) {
     return (
