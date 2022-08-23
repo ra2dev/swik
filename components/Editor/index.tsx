@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback, useRef, useEffect} from "react"
+import React, {useMemo, useCallback, useRef, useEffect, useState} from "react"
 // @ts-ignore
 import ReactDOM from "react-dom"
 import {createEditor} from "slate"
@@ -15,10 +15,10 @@ const initialValue: any[] = [
         children: [
             {
                 type: "mention",
-                character: "R2-D2",
+                character: "convert",
                 children: [{text: ""}]
             },
-            {text: "!"}
+            {text: "bas"}
         ]
     }
 ]
@@ -32,7 +32,7 @@ const Editor = () => {
     // ref used to avoid hmr issues in dev mode, probably should be resolved in a better way
     const editorRef = useRef(withMentions(withReact(withHistory(withSingleLine(createEditor()) as any))))
     const editor = editorRef.current
-    const {onKeyDown, onChange, portal} = useTokenItem(editor)
+    const {onKeyDown, onChange, addMention, onBlur} = useTokenItem(editor)
 
     return (
         <div className='main-editor rounded-md p-3 px-4 pb-0'>
@@ -40,6 +40,7 @@ const Editor = () => {
                 <Editable
                     renderElement={renderElement}
                     onKeyDown={onKeyDown}
+                    onBlurCapture={onBlur}
                     placeholder='Search for commands and actions'
                 />
             </Slate>
@@ -51,7 +52,7 @@ const Editor = () => {
                     margin: "10px -1rem 10px -1rem"
                 }}
             />
-            <TokenMenu />
+            <TokenMenu addMention={addMention} />
         </div>
     )
 }

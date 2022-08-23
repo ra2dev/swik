@@ -51,111 +51,71 @@ export const useTokenItem = (editor: any) => {
     const [target, setTarget] = useState<Range | null>(null)
     const [index, setIndex] = useState(0)
     const [search, setSearch] = useState("")
+    const positionRef = useRef(editor.selection?.focus)
+    if (editor.selection?.focus) positionRef.current = editor.selection?.focus
+
+    const onBlur = () => {
+        if (editor.selection?.focus) positionRef.current = editor.selection?.focus
+    }
+
     const chars = CHARACTERS
 
-    useEffect(() => {
-        if (target && chars.length > 0 && ref.current) {
-            const el = ref.current
-            const domRange = ReactEditor.toDOMRange(editor, target)
-            const rect = domRange.getBoundingClientRect()
-            if (el) {
-                el.style.top = `${rect.top + window.pageYOffset + 24}px`
-                el.style.left = `${rect.left + window.pageXOffset}px`
-            }
+    const getText = (from?: any) => {
+        return Editor.string(editor, Editor.range(editor, from ?? {offset: 0, path: [0, 0]}, editor?.selection?.anchor))
+    }
+
+    const addMention = (nextText: any) => {
+        const focus = editor.selection?.focus ?? Editor.end(editor, [])
+        const prev = Editor.before(editor, focus, {unit: "word"})
+
+        console.log({prev, focus})
+        Transforms.select(editor, {
+            anchor: prev!,
+            focus: focus
+        })
+        const mention = {
+            type: "mention",
+            character: nextText,
+            children: [{text: ""}]
         }
-    }, [chars.length, editor, index, search, target])
+        try {
+            Transforms.insertNodes(editor, mention)
+        } catch (e) {
+            Transforms.insertNodes(editor, mention, {at: focus})
+        }
+
+        try {
+            Transforms.move(editor)
+        } catch (e) {}
+    }
 
     const onKeyDown = useCallback(
         event => {
-            if (target) {
-                switch (event.key) {
-                    case "ArrowDown":
-                        event.preventDefault()
-                        const prevIndex = index >= chars.length - 1 ? 0 : index + 1
-                        setIndex(prevIndex)
-                        break
-                    case "ArrowUp":
-                        event.preventDefault()
-                        const nextIndex = index <= 0 ? chars.length - 1 : index - 1
-                        setIndex(nextIndex)
-                        break
-                    case "Tab":
-                    case "Enter":
-                        event.preventDefault()
-                        Transforms.select(editor, target)
-                        insertMention(editor, chars[index])
-                        setTarget(null)
-                        break
-                    case "Escape":
-                        event.preventDefault()
-                        setTarget(null)
-                        break
-                }
+            switch (event.key) {
+                case "Enter":
+                    event.preventDefault()
+                    // Transforms.select(editor, editor?.selection?.focus)
+                    // insertMention(editor, getText())
+
+                    // @ts-ignore
+                    for (const position of Editor.positions(editor)) {
+                        console.log(position)
+                    }
+
+                    console.log("1", getText(Editor.before(editor, editor.selection.focus, {unit: "word"})))
+                    console.log(editor?.selection)
+
+                    const prev = Editor.before(editor, editor.selection.focus, {unit: "word"})
+                    addMention(getText(prev))
+
+                    // console.log(editor?.selection)
+                    // setTarget(null)
+                    break
             }
         },
         [index, search, target]
     )
 
-    const portal = (
-        <>
-            {target && chars.length > 0 && (
-                <Portal>
-                    <div
-                        ref={ref}
-                        style={{
-                            top: "-9999px",
-                            left: "-9999px",
-                            position: "absolute",
-                            zIndex: 1,
-                            padding: "3px",
-                            background: "white",
-                            borderRadius: "4px",
-                            boxShadow: "0 1px 5px rgba(0,0,0,.2)"
-                        }}
-                        data-cy='mentions-portal'
-                    >
-                        {chars.map((char, i) => (
-                            <div
-                                key={char}
-                                style={{
-                                    padding: "1px 3px",
-                                    borderRadius: "3px",
-                                    background: i === index ? "#B4D5FF" : "transparent"
-                                }}
-                            >
-                                {char}
-                            </div>
-                        ))}
-                    </div>
-                </Portal>
-            )}
-        </>
-    )
-
-    const onChange = () => {
-        const {selection} = editor
-
-        if (selection && Range.isCollapsed(selection)) {
-            const [start] = Range.edges(selection)
-            const wordBefore = Editor.before(editor, start)
-            const before = wordBefore && Editor.before(editor, wordBefore)
-            const beforeRange = before && Editor.range(editor, before, start)
-            const beforeText = beforeRange && Editor.string(editor, beforeRange)
-            const beforeMatch = beforeText && beforeText.match(/^\/(\w+)$/)
-            const after = Editor.after(editor, start)
-            const afterRange = Editor.range(editor, start, after)
-            const afterText = Editor.string(editor, afterRange)
-            const afterMatch = afterText.match(/^(\s|$)/)
-
-            if (beforeMatch && afterMatch) {
-                setTarget(beforeRange)
-                setSearch(beforeMatch[1])
-                setIndex(0)
-                return
-            }
-        }
-
-        setTarget(null)
-    }
-    return {onKeyDown, onChange, portal}
+    const onChange = () => {}
+    return {onKeyDown, onChange, addMention, onBlur}
 }

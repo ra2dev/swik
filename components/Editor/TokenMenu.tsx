@@ -25,7 +25,7 @@ const TokenMenuBottom = () => {
             className='p-2 menu-bottom flex'
         >
             <div className='text-gray-700'>
-                🦄 <span className='text-xs'>Option Selected</span>
+                🦄 <span className='text-xs'>Magic mode</span>
             </div>
             <div className='ml-auto text-gray-400 text-sm flex'>
                 <span>Action</span>
@@ -36,8 +36,7 @@ const TokenMenuBottom = () => {
     )
 }
 
-export const TokenMenu = () => {
-    const active = false
+export const TokenMenu = ({addMention}: any) => {
     return (
         <>
             <div style={{marginLeft: "-1rem", marginRight: "-1rem"}} className='px-2'>
@@ -46,13 +45,12 @@ export const TokenMenu = () => {
                         <div className='mb-1'>
                             {e.title && <div className='text-xs font-light text-gray-500'>{e.title}</div>}
                             {e.items?.map((el: any, i: any) => {
-                                const active = i === 0 && j === 1
+                                const onClick = () => addMention(el.title)
+                                // bg-gray-100 text-gray-700 font-semibold
                                 return (
                                     <button
-                                        data-active={active?.toString()}
-                                        className={`${
-                                            active ? "bg-gray-100 text-gray-700 font-semibold" : "text-gray-600"
-                                        } group flex w-full items-center rounded-md px-2 py-2 text-sm editor-option  focus:outline-none`}
+                                        className={`text-gray-600 group flex w-full items-center rounded-md px-2 py-2 text-sm editor-option focus:outline-none`}
+                                        onClick={onClick}
                                     >
                                         {el.icon ? (
                                             <div className='mr-3'>{el.icon}</div>
@@ -74,7 +72,6 @@ export const TokenMenu = () => {
         </>
     )
 }
-
 
 function EditInactiveIcon(props: any) {
     return (
