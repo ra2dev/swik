@@ -1,8 +1,11 @@
-export const menuItems: any[] = [
+import {actionConfig} from "./config"
+import {useMemo} from "react"
+
+export const actionList: any[] = [
     {
         title: "Developer",
         items: [
-            {title: "Convert", type: "Command", icon: "🧶"},
+            {title: "Convert", type: "Command", icon: "🧶", code: "convert"},
             {title: "Transformate", type: "Media"}
         ]
     },
@@ -36,17 +39,51 @@ const TokenMenuBottom = () => {
     )
 }
 
-export const TokenMenu = ({addMention}: any) => {
+export const TokenMenuSub = () => {
+    return (
+        <div>
+            <h1>SELECTED PREV</h1>
+        </div>
+    )
+}
+
+export const TokenMenu = ({addMention, search, tokens}: any) => {
+    const {items} = useMemo(() => {
+        const lastToken = tokens?.[tokens?.length - 1]
+
+        let resultItems =
+            (lastToken ? actionConfig?.[lastToken]?.items : actionConfig.actions.items)
+                ?.map((e: any) => ({
+                    ...e,
+                    items: e?.items?.filter(
+                        (el: any) => !search || el?.code?.toLowerCase()?.includes(search?.toLowerCase())
+                    )
+                }))
+                .filter((e: any) => e?.items?.length) ?? []
+
+        return {
+            items: resultItems,
+            lastToken
+        }
+    }, [search, tokens])
+
+    if (!items.length) {
+        return (
+            <div>
+                <div className='text-gray-500 text-xs'>No Items found for "{search}"</div>
+                <TokenMenuBottom />
+            </div>
+        )
+    }
     return (
         <>
             <div style={{marginLeft: "-1rem", marginRight: "-1rem"}} className='px-2'>
-                {menuItems.map((e, j) => {
+                {items.map((e: any) => {
                     return (
                         <div className='mb-1'>
                             {e.title && <div className='text-xs font-light text-gray-500'>{e.title}</div>}
                             {e.items?.map((el: any, i: any) => {
                                 const onClick = () => addMention(el.title)
-                                // bg-gray-100 text-gray-700 font-semibold
                                 return (
                                     <button
                                         className={`text-gray-600 group flex w-full items-center rounded-md px-2 py-2 text-sm editor-option focus:outline-none`}

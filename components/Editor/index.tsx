@@ -1,7 +1,7 @@
-import React, {useMemo, useCallback, useRef, useEffect, useState} from "react"
+import React, {useMemo, useCallback, useRef, useState} from "react"
 // @ts-ignore
 import ReactDOM from "react-dom"
-import {createEditor} from "slate"
+import {createEditor, Editor as EditorType} from "slate"
 import {withHistory} from "slate-history"
 import {Slate, Editable, withReact} from "slate-react"
 import {TokenItem} from "./TokenItem/TokenItem"
@@ -28,15 +28,29 @@ const editorComponents: any = {
 }
 
 const Editor = () => {
+    const [value, setValue] = useState(initialValue)
     const renderElement = useCallback(props => <Element {...props} />, [])
     // ref used to avoid hmr issues in dev mode, probably should be resolved in a better way
     const editorRef = useRef(withMentions(withReact(withHistory(withSingleLine(createEditor()) as any))))
-    const editor = editorRef.current
-    const {onKeyDown, onChange, addMention, onBlur} = useTokenItem(editor)
+    const editor = editorRef.current as EditorType
+    const {onKeyDown, addMention, onBlur} = useTokenItem(editor)
+
+    const {tokens, search} = useMemo(() => {
+        const items: any[] = value[0]?.children?.filter((e: any) => e.text || e.character) ?? []
+        return {
+            tokens: items.filter(e => e.type === "mention").map(e => e.character?.toLowerCase()) ?? [],
+            search:
+                items
+                    .filter(e => e.type !== "mention")
+                    .map(e => e.text)
+                    .pop()
+                    ?.trim() ?? ""
+        }
+    }, [value])
 
     return (
         <div className='main-editor rounded-md p-3 px-4 pb-0'>
-            <Slate editor={editor} value={initialValue} onChange={onChange}>
+            <Slate editor={editor as any} value={value} onChange={setValue}>
                 <Editable
                     renderElement={renderElement}
                     onKeyDown={onKeyDown}
@@ -52,7 +66,7 @@ const Editor = () => {
                     margin: "10px -1rem 10px -1rem"
                 }}
             />
-            <TokenMenu addMention={addMention} />
+            <TokenMenu addMention={addMention} search={search} tokens={tokens} />
         </div>
     )
 }

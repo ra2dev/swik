@@ -47,18 +47,12 @@ export function withSingleLine(editor: any) {
 }
 
 export const useTokenItem = (editor: any) => {
-    const ref = useRef<HTMLDivElement | null>(null)
-    const [target, setTarget] = useState<Range | null>(null)
-    const [index, setIndex] = useState(0)
-    const [search, setSearch] = useState("")
     const positionRef = useRef(editor.selection?.focus)
     if (editor.selection?.focus) positionRef.current = editor.selection?.focus
 
     const onBlur = () => {
         if (editor.selection?.focus) positionRef.current = editor.selection?.focus
     }
-
-    const chars = CHARACTERS
 
     const getText = (from?: any) => {
         return Editor.string(editor, Editor.range(editor, from ?? {offset: 0, path: [0, 0]}, editor?.selection?.anchor))
@@ -68,18 +62,23 @@ export const useTokenItem = (editor: any) => {
         const focus = editor.selection?.focus ?? Editor.end(editor, [])
         const prev = Editor.before(editor, focus, {unit: "word"})
 
-        console.log({prev, focus})
-        Transforms.select(editor, {
-            anchor: prev!,
-            focus: focus
-        })
         const mention = {
             type: "mention",
             character: nextText,
             children: [{text: ""}]
         }
         try {
-            Transforms.insertNodes(editor, mention)
+            if (!getText(prev)) {
+                Transforms.move(editor)
+                Transforms.insertNodes(editor, mention)
+            } else {
+                Transforms.select(editor, {
+                    anchor: prev!,
+                    focus: focus
+                })
+                Transforms.insertNodes(editor, mention)
+            }
+            // { at: [editor.children.length] }
         } catch (e) {
             Transforms.insertNodes(editor, mention, {at: focus})
         }
@@ -89,33 +88,29 @@ export const useTokenItem = (editor: any) => {
         } catch (e) {}
     }
 
-    const onKeyDown = useCallback(
-        event => {
-            switch (event.key) {
-                case "Enter":
-                    event.preventDefault()
-                    // Transforms.select(editor, editor?.selection?.focus)
-                    // insertMention(editor, getText())
+    const onKeyDown = useCallback(event => {
+        switch (event.key) {
+            case "Enter":
+                event.preventDefault()
+                // Transforms.select(editor, editor?.selection?.focus)
+                // insertMention(editor, getText())
 
-                    // @ts-ignore
-                    for (const position of Editor.positions(editor)) {
-                        console.log(position)
-                    }
+                // @ts-ignore
+                for (const position of Editor.positions(editor)) {
+                    console.log(position)
+                }
 
-                    console.log("1", getText(Editor.before(editor, editor.selection.focus, {unit: "word"})))
-                    console.log(editor?.selection)
+                const prev = Editor.before(editor, editor.selection.focus, {unit: "word"})
+                addMention(getText(prev))
 
-                    const prev = Editor.before(editor, editor.selection.focus, {unit: "word"})
-                    addMention(getText(prev))
+                // console.log(editor?.selection)
+                // setTarget(null)
+                break
+        }
+    }, [])
 
-                    // console.log(editor?.selection)
-                    // setTarget(null)
-                    break
-            }
-        },
-        [index, search, target]
-    )
-
-    const onChange = () => {}
+    const onChange = (val: any) => {
+        console.log(val)
+    }
     return {onKeyDown, onChange, addMention, onBlur}
 }
