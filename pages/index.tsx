@@ -1,10 +1,13 @@
 import {Layout} from "../components/layout"
-import Editor from "../components/Editor"
+import {RaycastCMDK} from "../components/NextEditor"
+import {FramerCMDK} from "../components/FramerSample"
 
 export default function Home() {
     return (
         <Layout>
-            <Editor />
+            <FramerCMDK />
+            <br />
+            <RaycastCMDK />
         </Layout>
     )
 }

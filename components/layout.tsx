@@ -45,10 +45,10 @@ const Tabs = ({items}: {items: {title: string}[]}) => {
 export const Navigation = () => {
     return (
         <header
-            className='w-full flex flex-col flex-row items-center  border-gray-300 border-b-1 border-solid border'
+            className='w-full flex flex-col flex-row items-center  border-transparent border-b-1 border-solid border'
             style={{}}
         >
-            <nav className='ml-auto container mr-auto max-w-5xl flex flex-row items-center text-gray-600 text-sm h-14'>
+            <nav className='ml-auto container mr-auto max-w-5xl flex flex-row items-center text-white text-sm h-14'>
                 <div>
                     <Logo />
                 </div>
@@ -58,7 +58,7 @@ export const Navigation = () => {
                     </div>
                     <div>
                         <button
-                            className='ml-4 text-gray-600 text-sm p-1 pl-2 pr-2 rounded-md border-2 border-gray-400 border active:border-gray-400 hover:border-gray-400 focus:border-gray-400'
+                            className='ml-4 text-white text-sm p-1 pl-2 pr-2 rounded-md border-2 border-gray-400 border active:border-gray-400 hover:border-gray-400 focus:border-gray-400'
                             onClick={() => alert("register")}
                         >
                             Register
@@ -66,15 +66,12 @@ export const Navigation = () => {
                     </div>
                 </div>
             </nav>
-            <div className='flex ml-auto container mr-auto max-w-5xl text-sm mt-2'>
-                <Tabs items={[{"title": "Utilities"}, {"title": "Short Link"}]} />
-            </div>
         </header>
     )
 }
 export const Footer = () => {
     return (
-        <footer className='w-full border-t-1 border-gray-300 border-t-1 border-solid border-t'>
+        <footer className='w-full border-gray-300 border-t-1 border-solid border-t'>
             <div className='container ml-auto mr-auto max-w-5xl text-center p-2 pb-5 flex justify-center mt-4 mb-4'>
                 <a href='https://ra2.dev' target='_blank' rel='noopener noreferrer' className='mr-auto ml-auto flex'>
                     <span>
@@ -99,7 +96,7 @@ export const Layout = (props: any) => {
     return (
         <>
             <Navigation />
-            <main className='w-full' id='content'>
+            <main className='w-full dark' id='content'>
                 <div className='container ml-auto mr-auto pt-10 pr-10 max-w-5xl mb-20'>{props.children}</div>
             </main>
             <Footer />
